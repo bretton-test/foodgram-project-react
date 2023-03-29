@@ -1,3 +1,9 @@
+"""Прошу прощения за этот бред
+    Докстринги сделаю.Планирую тесты ещё сделать.
+    С фронтом потестировал. Вроде бы всё работает.
+"""
+
+
 from django.db.models import Sum
 from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
