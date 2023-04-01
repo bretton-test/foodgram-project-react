@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from djoser.views import UserViewSet
 from rest_framework import exceptions
 from rest_framework.decorators import action
@@ -8,8 +9,9 @@ from rest_framework.permissions import (
 
 from api.pagination import CustomPageNumberPagination
 from api.utils import create_or_delete_record
-from users.models import User
 from users.serializers import SubscriptionSerializer
+
+User = get_user_model()
 
 
 class CustomUserViewSet(UserViewSet):

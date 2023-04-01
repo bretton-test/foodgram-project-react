@@ -4,8 +4,8 @@ import sys
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand
 
-from recipes.models import Tag, Recipe, RecipeTag, RecipeIngredient, Ingredient
-from users.models import User
+from recipes.models import Tag, Recipe, RecipeTag, RecipeIngredient, Ingredient, Favorite, ShoppingList
+from users.models import User, Follow
 
 small_gif = (
     b'\x47\x49\x46\x38\x39\x61\x01\x00'
@@ -19,12 +19,36 @@ small_gif = (
 class Command(BaseCommand):
     help = 'Создание тестовых данных'
 
+    @staticmethod
+    def get_random_user():
+        return User.objects.all()[
+            random.randint(0, User.objects.count() - 1)
+        ]
+
     def handle(self, *args, **options):
-        # params_for_create = []
+
         test_image = SimpleUploadedFile(
             name='small.gif', content=small_gif, content_type='image/gif'
         )
         try:
+            user = User.objects.create_user(
+                username='HasNoName',
+                email='HasNoEmail@mail.com',
+                first_name='HasNoFirstName',
+                last_name='HasNoLastName',
+                password='HasNoPassword'
+            )
+            another_user = User.objects.create_user(
+                username='HasNoName1',
+                email='HasNoEmail1@mail.com',
+                first_name='HasNoFirstName1',
+                last_name='HasNoLastName1',
+                password='HasNoPassword'
+            )
+
+            Follow.objects.create(user=another_user, author=user)
+            Follow.objects.create(user=user, author=another_user)
+
             if not Tag.objects.exists():
                 Tag.objects.create(
                     name='Завтрак', color='#E26C2D', slug='breakfast'
@@ -38,10 +62,11 @@ class Command(BaseCommand):
                     text=f'Тестовый рецепт {rec_num}',
                     cooking_time=random.randint(1, 25),
                     image=test_image,
-                    author=User.objects.all()[
-                        random.randint(0, User.objects.count() - 1)
-                    ],
+                    author=self.get_random_user(),
                 )
+                Favorite.objects.create(recipe=recipe, user=self.get_random_user())
+                ShoppingList.objects.create(recipe=recipe, user=self.get_random_user())
+
                 for num in range(random.randint(1, 3)):
                     RecipeTag.objects.create(
                         recipe=recipe, tag=Tag.objects.all()[num]

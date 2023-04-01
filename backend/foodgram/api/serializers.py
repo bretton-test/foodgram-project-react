@@ -1,4 +1,5 @@
 from django.core.validators import MinValueValidator
+from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -63,6 +64,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         user = self.context['request'].user
+
         return (
             obj.in_favorite.filter(user_id=user.id).exists()
             if not user.is_anonymous
@@ -91,7 +93,7 @@ class CreateUpdateRecipeIngredientSerializer(serializers.ModelSerializer):
         required=True,
     )
     amount = serializers.IntegerField(
-        validators=(MinValueValidator(1, message='ammount 1 min.'),)
+        validators=(MinValueValidator(1, message='amount 1 min.'),)
     )
 
     class Meta:
@@ -114,35 +116,29 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         recipe_id = self.initial_data.get('id')
         user = self.context.get('request').user
         name = self.initial_data.get('name')
+        ingredients_value = data.get('ingredients', None)
+        if not ingredients_value:
+            raise serializers.ValidationError('ingredients is required')
+        ingredients = [item['ingredient'] for item in ingredients_value]
+        if len(ingredients) != len(set(ingredients)):
+            raise serializers.ValidationError(
+                'A recipe cannot have two of the same ingredient.'
+            )
+
+        if not data.get('tags', None):
+            raise serializers.ValidationError('tags is required')
 
         if user.recipes.exclude(pk=recipe_id).filter(name=name).exists():
             raise serializers.ValidationError('A recipe name already exists')
 
         return data
 
-    @staticmethod
-    def validate_tags(value):
-        if not value:
-            raise serializers.ValidationError('tags is required')
-        return value
-
-    @staticmethod
-    def validate_ingredients(value):
-        if not value:
-            raise serializers.ValidationError('ingredients is required')
-        ingredients = [item['ingredient'] for item in value]
-        if len(ingredients) != len(set(ingredients)):
-            raise serializers.ValidationError(
-                'A recipe cannot have two of the same ingredient.'
-            )
-        return value
-
+    @transaction.atomic
     def create(self, validated_data):
 
         author = self.context.get('request').user
         tags_data = validated_data.pop('tags')
         ingredients_data = validated_data.pop('ingredients')
-
         recipe = Recipe.objects.create(author=author, **validated_data)
         recipe.tags.set(tags_data)
         create_recipe_ingredients(ingredients_data, recipe)
