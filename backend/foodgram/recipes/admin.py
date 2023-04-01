@@ -28,11 +28,13 @@ class TagAdmin(admin.ModelAdmin):
 class RecipeIngredientsInLine(admin.TabularInline):
     model = Recipe.ingredients.through
     extra = 1
+    min_num = 1
 
 
 class RecipeTagsInLine(admin.TabularInline):
     model = Recipe.tags.through
     extra = 1
+    min_num = 1
 
 
 @admin.register(Recipe)
