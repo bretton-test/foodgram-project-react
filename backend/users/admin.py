@@ -5,6 +5,7 @@ from .models import Follow
 
 User = get_user_model()
 
+
 @admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'author')

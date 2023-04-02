@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 from api.utils import get_end_letter
-from .models import Ingredient, Unit, Tag, Recipe, Favorite, ShoppingList
+
+from .models import Favorite, Ingredient, Recipe, ShoppingList, Tag, Unit
 
 
 @admin.register(Ingredient)
