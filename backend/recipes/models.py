@@ -1,6 +1,6 @@
+from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.conf import settings
 
 from users.models import User
 
@@ -174,7 +174,7 @@ class RecipeIngredient(models.Model):
         )
 
     def __str__(self):
-        return f'{self.ingredient} {self.recipe}'
+        return f'{self.ingredient} in {self.recipe} ingredients list'
 
 
 class RecipeTag(models.Model):
@@ -186,7 +186,7 @@ class RecipeTag(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.PROTECT, verbose_name='Тег')
 
     def __str__(self):
-        return f'{self.tag} {self.recipe}'
+        return f'{self.tag} in {self.recipe} tags'
 
 
 class Favorite(models.Model):
@@ -216,7 +216,7 @@ class Favorite(models.Model):
         )
 
     def __str__(self):
-        return f'{self.user} {self.recipe}'
+        return f'{self.recipe} in {self.user} favorite'
 
 
 class ShoppingList(models.Model):
@@ -246,4 +246,4 @@ class ShoppingList(models.Model):
         )
 
     def __str__(self):
-        return f'{self.user} {self.recipe}'
+        return f'{self.recipe} in {self.user} shopping list'

@@ -2,14 +2,12 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 
 from api.serializers import (
-    RecipeSerializer,
+    IngredientSerializer, RecipeIngredientsSerializer, RecipeSerializer,
     TagSerializer,
-    IngredientSerializer,
-    RecipeIngredientsSerializer,
 )
 from api.tests.fixtures import RecipeTest, get_objects_instances_to_test
-from recipes.models import Recipe, Tag, Ingredient
-from users.models import User, Follow
+from recipes.models import Ingredient, Recipe, Tag
+from users.models import Follow, User
 from users.serializers import SubscriptionSerializer
 
 RECIPE_TO_TEST = 2

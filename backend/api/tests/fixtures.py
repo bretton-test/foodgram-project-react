@@ -1,16 +1,15 @@
 import random
 import shutil
-import sys
 import tempfile
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import Client
-from django.test import TestCase
-from django.test import override_settings
+from django.test import Client, TestCase, override_settings
 
-from recipes.models import Tag, Recipe, RecipeTag, RecipeIngredient, Ingredient, Unit
+from recipes.models import (
+    Ingredient, Recipe, RecipeIngredient, RecipeTag, Tag, Unit,
+)
 
 User = get_user_model()
 
@@ -61,7 +60,9 @@ def get_objects_instances_to_test(number_of_recipes=1):
     try:
         measurement_unit = Unit.objects.create(name='шт.')
         for rec_num in range(10):
-            Ingredient.objects.create(name=f'ingredient{rec_num}', measurement_unit=measurement_unit)
+            Ingredient.objects.create(
+                name=f'ingredient{rec_num}', measurement_unit=measurement_unit
+            )
 
         if not Tag.objects.exists():
             Tag.objects.create(
@@ -80,17 +81,15 @@ def get_objects_instances_to_test(number_of_recipes=1):
             )
 
             RecipeTag.objects.create(
-                recipe=recipe, tag=Tag.objects.first(),
+                recipe=recipe,
+                tag=Tag.objects.first(),
             )
 
             RecipeIngredient.objects.create(
                 recipe=recipe,
                 ingredient=Ingredient.objects.first(),
-
                 amount=random.randint(1, 200),
             )
-
-
 
     except Exception as error:
         print(error)

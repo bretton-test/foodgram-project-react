@@ -10,22 +10,12 @@ from api.filters import RecipeFilter
 from api.pagination import CustomPageNumberPagination
 from api.permissions import IsOwnerOrStaffOrReadOnly
 from api.serializers import (
-    IngredientSerializer,
-    TagSerializer,
-    RecipeSerializer,
-    RecipeCreateUpdateSerializer,
-    RecipeFavoriteSerializer,
+    IngredientSerializer, RecipeCreateUpdateSerializer,
+    RecipeFavoriteSerializer, RecipeSerializer, TagSerializer,
 )
-from recipes.models import (
-    Ingredient,
-    Tag,
-    Recipe,
-    RecipeIngredient,
-)
-from .utils import (
-    create_pdf_from_queryset,
-    create_or_delete_record,
-)
+from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
+
+from .utils import create_or_delete_record, create_pdf_from_queryset
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
