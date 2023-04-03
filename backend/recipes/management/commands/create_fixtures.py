@@ -82,7 +82,10 @@ class Command(BaseCommand):
                         RecipeIngredient.objects.create(
                             recipe=recipe,
                             ingredient=Ingredient.objects.all()[
-                                random.randint(0, Ingredient.objects.count() - 1)
+                                random.randint(
+                                    0,
+                                    Ingredient.objects.count() - 1
+                                )
                             ],
                             amount=random.randint(1, 200),
                         )
