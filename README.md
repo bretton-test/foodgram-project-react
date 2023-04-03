@@ -1,3 +1,4 @@
+![foodgram workflow](https://github.com/bretton-test/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?event=push)
 # **Foodgram project**
 
 ### _Продуктовый помощник_
