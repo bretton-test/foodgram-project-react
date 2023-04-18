@@ -1,4 +1,4 @@
-from django.db.models import Sum, Q, Case, When, Value, FloatField, F
+from django.db.models import Case, F, FloatField, Q, Sum, Value, When
 from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
@@ -10,13 +10,11 @@ from api.filters import RecipeFilter
 from api.pagination import CustomPageNumberPagination
 from api.permissions import IsOwnerOrStaffOrReadOnly
 from api.serializers import (
-    IngredientSerializer,
-    RecipeCreateUpdateSerializer,
-    RecipeFavoriteSerializer,
-    RecipeSerializer,
-    TagSerializer,
+    IngredientSerializer, RecipeCreateUpdateSerializer,
+    RecipeFavoriteSerializer, RecipeSerializer, TagSerializer,
 )
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
+
 from .utils import create_or_delete_record, create_pdf_from_queryset
 
 

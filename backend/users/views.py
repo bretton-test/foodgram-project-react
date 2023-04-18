@@ -4,7 +4,6 @@ from rest_framework import exceptions
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
 from api.pagination import CustomPageNumberPagination
 from api.utils import create_or_delete_record
