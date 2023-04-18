@@ -38,13 +38,3 @@
 - [ReDoc](http://blog.avmark.ru/api/docs/)
 
 
-# Данные для доступа
-Доступ в приложение:
-
-email: HasNoEmail@mail.com
-password: HasNoPassword
-
-Данные для доступа в админ-панель:
-
-user: admin
-password: !Q2w3e4r
