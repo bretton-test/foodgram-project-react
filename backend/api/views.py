@@ -94,9 +94,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=False, methods=('get',), permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        # log = logging.getLogger('django.db.backends')
-        # log.setLevel(logging.DEBUG)
-        # log.addHandler(logging.StreamHandler())
         user = self.request.user
         recipes = user.shopping_list.values('recipe__id')
 

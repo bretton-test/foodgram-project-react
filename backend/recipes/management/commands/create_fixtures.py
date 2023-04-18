@@ -3,6 +3,7 @@ import sys
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand
+from django.db import IntegrityError
 
 from recipes.models import (
     Favorite, Ingredient, Recipe, RecipeIngredient, RecipeTag, ShoppingList,
@@ -77,13 +78,21 @@ class Command(BaseCommand):
                         recipe=recipe, tag=Tag.objects.all()[num]
                     )
                 for num in range(random.randint(1, 5)):
-                    RecipeIngredient.objects.create(
-                        recipe=recipe,
-                        ingredient=Ingredient.objects.all()[
-                            random.randint(0, Ingredient.objects.count() - 1)
-                        ],
-                        amount=random.randint(1, 200),
-                    )
+                    try:
+                        RecipeIngredient.objects.create(
+                            recipe=recipe,
+                            ingredient=Ingredient.objects.all()[
+                                random.randint(
+                                    0,
+                                    Ingredient.objects.count() - 1
+                                )
+                            ],
+                            amount=random.randint(1, 200),
+                        )
+                    except IntegrityError as error:
+                        self.stdout.write(
+                            self.style.ERROR(error),
+                        )
 
         except Exception as error:
             self.stdout.write(
