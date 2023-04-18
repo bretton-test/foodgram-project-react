@@ -1,7 +1,7 @@
-from django.db.models import Sum
+from django.db.models import Sum, Q, Case, When, Value, FloatField, F
 from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -10,19 +10,43 @@ from api.filters import RecipeFilter
 from api.pagination import CustomPageNumberPagination
 from api.permissions import IsOwnerOrStaffOrReadOnly
 from api.serializers import (
-    IngredientSerializer, RecipeCreateUpdateSerializer,
-    RecipeFavoriteSerializer, RecipeSerializer, TagSerializer,
+    IngredientSerializer,
+    RecipeCreateUpdateSerializer,
+    RecipeFavoriteSerializer,
+    RecipeSerializer,
+    TagSerializer,
 )
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
-
 from .utils import create_or_delete_record, create_pdf_from_queryset
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('^name',)
+
+    def get_queryset(self):
+        string = self.request.query_params.get('name', None)
+        if string is not None:
+            queryset = (
+                Ingredient.objects.select_related('measurement_unit').filter(
+                    Q(name__istartswith=string) | Q(name__icontains=string)
+                )
+                .annotate(
+                    k1=Case(
+                        When(name__istartswith=string, then=Value(1.0)),
+                        default=Value(0.0),
+                        output_field=FloatField(),
+                    ),
+                    k2=Case(
+                        When(name__icontains=string, then=Value(1.0)),
+                        default=Value(0.0),
+                        output_field=FloatField(),
+                    ),
+                    rank=F("k1") + F("k2"),
+                ).distinct().order_by('-rank', 'name')
+            )
+
+            return queryset
+        return Ingredient.objects.all()
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -40,7 +64,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ('create', 'partial_update'):
             return RecipeCreateUpdateSerializer
-
         return RecipeSerializer
 
     @action(detail=True, methods=('post', 'delete'))
