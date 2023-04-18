@@ -24,8 +24,9 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         string = self.request.query_params.get('name', None)
         if string is not None:
-            queryset = (
-                Ingredient.objects.select_related('measurement_unit').filter(
+            return (
+                Ingredient.objects.select_related('measurement_unit')
+                .filter(
                     Q(name__istartswith=string) | Q(name__icontains=string)
                 )
                 .annotate(
@@ -40,10 +41,10 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
                         output_field=FloatField(),
                     ),
                     rank=F("k1") + F("k2"),
-                ).distinct().order_by('-rank', 'name')
+                )
+                .distinct()
+                .order_by('-rank', 'name')
             )
-
-            return queryset
         return Ingredient.objects.all()
 
 
