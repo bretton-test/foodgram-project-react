@@ -1,4 +1,5 @@
 import io
+
 from typing import Dict
 
 from reportlab.lib.pagesizes import A4
@@ -13,13 +14,13 @@ from recipes.models import RecipeIngredient
 
 def get_end_letter(value):
     end_lib: Dict[int, str] = {5: '', 2: 'а', 0: ''}
-    end_comment = ''
+
     for my_key in end_lib:
 
         if value % 10 >= my_key:
-            end_comment = end_lib[my_key]
-            break
-    return end_comment
+            return end_lib[my_key]
+
+    return ''
 
 
 def get_shopping_list_text(
@@ -84,3 +85,5 @@ def create_or_delete_record(request, record, serializer_data, params):
             raise exceptions.ValidationError('records does not exists.')
         record.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

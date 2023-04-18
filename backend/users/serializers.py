@@ -1,10 +1,12 @@
+from django.contrib.auth import get_user_model
 from django.utils.datastructures import MultiValueDictKeyError
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import LowercaseEmailField
 from rest_framework import serializers
 
 from api.utils import get_recipe_serializer
-from .models import User
+
+User = get_user_model()
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
